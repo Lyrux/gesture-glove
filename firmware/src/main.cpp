@@ -38,7 +38,7 @@ void loop() {
 	
 	
 	
-	// SAADC read logic (SAADC reads and prints once every ~19.2 ms)
+	// SAADC read logic (SAADC reads and prints once every ~6.4 ms)
     if (buffer_ready) {
         buffer_ready = false; // flag clear
 
