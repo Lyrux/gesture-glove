@@ -1,45 +1,154 @@
 #include <Arduino.h>
 #include <Adafruit_TinyUSB.h> // Include the Adafruit TinyUSB library for serial functionality
 
+//macros
+#define CHANNEL_NUM 3 //number of analog i/o pins
+#define BUFFER_SIZE 64*CHANNEL_NUM //64 samples/read
+
 // put function declarations here:
 int myFunction(int, int);
 
-// pinouts
-const int THUMB_PIN = A0;
-const int INDEX_PIN = A1;
-const int MIDDLE_PIN = A2;
+extern "C" void SAADC_IRQHandler(void); //SAADC interrupt
+void init_saadc_dma_ppi(void);
+
+//global vars
+alignas(4) int16_t adc_buffer0[BUFFER_SIZE];
+alignas(4) int16_t adc_buffer1[BUFFER_SIZE];
+volatile bool buffer_ready = false;
+volatile int16_t* completed_buffer = nullptr;
 
 void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(115200);
+	// put your setup code here, to run once:
+	Serial.begin(115200);
 
-  pinMode(THUMB_PIN, INPUT);
-  pinMode(INDEX_PIN, INPUT);
-  pinMode(MIDDLE_PIN, INPUT);
-
-  Serial.println("time_ms,thumb,index,middle");
+	__enable_irq();
+	init_saadc_dma_ppi();
+	
+	Serial.println("time_ms,thumb,index,middle");
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  unsigned long time = millis();
+    // put your main code here, to run repeatedly:
+    unsigned long time = millis();
 
-  int thumb = analogRead(THUMB_PIN);
-  int index = analogRead(INDEX_PIN);
-  int middle = analogRead(MIDDLE_PIN);
+    if (buffer_ready) {
+        buffer_ready = false;
+        
+		__disable_irq();
+        int16_t* local_buffer;
+        local_buffer = completed_buffer;
+        __enable_irq();
 
-  Serial.print(time);
-  Serial.print(",");
-  Serial.print(thumb);
-  Serial.print(",");
-  Serial.print(index);
-  Serial.print(",");
-  Serial.println(middle);
+        int32_t ch0_sum = 0;
+        int32_t ch1_sum = 0;
+        int32_t ch2_sum = 0;
+        int samples_per_channel = BUFFER_SIZE / CHANNEL_NUM; //e.g., 256 each
+		
+        for (int i = 0; i < BUFFER_SIZE; i += CHANNEL_NUM)  {
+            ch0_sum += local_buffer[i]; //ch0 mod3=0
+            ch1_sum += local_buffer[i + 1]; //ch1 mod3=1
+            ch2_sum += local_buffer[i + 2]; //ch2 mod3=2
+        }
 
-  delay(50);
+        int16_t thumb = ch0_sum / samples_per_channel; //ch0 avg
+        int16_t index = ch1_sum / samples_per_channel; //ch1 avg
+        int16_t middle = ch2_sum / samples_per_channel; //ch2 avg
+
+        Serial.printf("Time: %lu, Thumb: %d, Index: %d, Middle: %d\n", time, thumb, index, middle);
+    }
 }
 
 // put function definitions here:
 int myFunction(int x, int y) {
-  return x + y;
+	return x + y;
+}
+
+extern "C" void SAADC_IRQHandler(void) {
+    if (NRF_SAADC->EVENTS_END) {
+        NRF_SAADC->EVENTS_END = 0; //clear flag
+
+        //assign completed buffer to the alternate state and load the just finished buffer next
+        if (completed_buffer == adc_buffer0) {
+            completed_buffer = adc_buffer1;
+            NRF_SAADC->RESULT.PTR = (uint32_t)adc_buffer1; //Queue buffer1 up next
+        } else {
+            completed_buffer = adc_buffer0;
+            NRF_SAADC->RESULT.PTR = (uint32_t)adc_buffer0; //Queue buffer0 up next
+        }
+        buffer_ready = true;
+        NRF_SAADC->TASKS_START = 1;
+    }
+}
+
+void init_saadc_dma_ppi() {
+    //saadc en
+    NRF_SAADC->ENABLE = SAADC_ENABLE_ENABLE_Enabled;
+
+    NRF_SAADC->INTENSET = (SAADC_INTENSET_END_Msk);
+    NVIC_SetPriority(SAADC_IRQn, 3);
+    NVIC_EnableIRQ(SAADC_IRQn);
+
+    //channel config (expand to channel size)
+    NRF_SAADC->CH[0].PSELP = SAADC_CH_PSELP_PSELP_AnalogInput1;
+    NRF_SAADC->CH[0].PSELN = SAADC_CH_PSELN_PSELN_NC; 
+    NRF_SAADC->CH[0].CONFIG = (SAADC_CH_CONFIG_RESP_Bypass     << SAADC_CH_CONFIG_RESP_Pos)   |
+                              (SAADC_CH_CONFIG_RESN_Bypass     << SAADC_CH_CONFIG_RESN_Pos)   |
+                              (SAADC_CH_CONFIG_GAIN_Gain1_6    << SAADC_CH_CONFIG_GAIN_Pos)   | 
+                              (SAADC_CH_CONFIG_REFSEL_Internal << SAADC_CH_CONFIG_REFSEL_Pos) | 
+                              (SAADC_CH_CONFIG_TACQ_10us       << SAADC_CH_CONFIG_TACQ_Pos)   | 
+                              (SAADC_CH_CONFIG_MODE_SE         << SAADC_CH_CONFIG_MODE_Pos);
+    
+    NRF_SAADC->CH[1].PSELP = SAADC_CH_PSELP_PSELP_AnalogInput2;
+    NRF_SAADC->CH[1].PSELN = SAADC_CH_PSELN_PSELN_NC; 
+    NRF_SAADC->CH[1].CONFIG = (SAADC_CH_CONFIG_RESP_Bypass     << SAADC_CH_CONFIG_RESP_Pos)   |
+                              (SAADC_CH_CONFIG_RESN_Bypass     << SAADC_CH_CONFIG_RESN_Pos)   |
+                              (SAADC_CH_CONFIG_GAIN_Gain1_6    << SAADC_CH_CONFIG_GAIN_Pos)   | 
+                              (SAADC_CH_CONFIG_REFSEL_Internal << SAADC_CH_CONFIG_REFSEL_Pos) | 
+                              (SAADC_CH_CONFIG_TACQ_10us       << SAADC_CH_CONFIG_TACQ_Pos)   | 
+                              (SAADC_CH_CONFIG_MODE_SE         << SAADC_CH_CONFIG_MODE_Pos);
+
+    NRF_SAADC->CH[2].PSELP = SAADC_CH_PSELP_PSELP_AnalogInput3;
+    NRF_SAADC->CH[2].PSELN = SAADC_CH_PSELN_PSELN_NC; 
+    NRF_SAADC->CH[2].CONFIG = (SAADC_CH_CONFIG_RESP_Bypass     << SAADC_CH_CONFIG_RESP_Pos)   |
+                              (SAADC_CH_CONFIG_RESN_Bypass     << SAADC_CH_CONFIG_RESN_Pos)   |
+                              (SAADC_CH_CONFIG_GAIN_Gain1_6    << SAADC_CH_CONFIG_GAIN_Pos)   | 
+                              (SAADC_CH_CONFIG_REFSEL_Internal << SAADC_CH_CONFIG_REFSEL_Pos) | 
+                              (SAADC_CH_CONFIG_TACQ_10us       << SAADC_CH_CONFIG_TACQ_Pos)   | 
+                              (SAADC_CH_CONFIG_MODE_SE         << SAADC_CH_CONFIG_MODE_Pos);
+    
+    
+    for (int i = 3; i < 8; i++) {
+        NRF_SAADC->CH[i].PSELP = SAADC_CH_PSELP_PSELP_NC; //no connect unused saadc analog pins
+    }
+
+    //12-bit resolution
+    NRF_SAADC->RESOLUTION = (SAADC_RESOLUTION_VAL_12bit << SAADC_RESOLUTION_VAL_Pos);
+
+    //load current and next buffer reads
+    NRF_SAADC->RESULT.PTR = (uint32_t)adc_buffer0;
+    NRF_SAADC->RESULT.MAXCNT = BUFFER_SIZE;
+    NRF_SAADC->TASKS_START = 1; //latch active
+    NRF_SAADC->RESULT.PTR = (uint32_t)adc_buffer1; //load next
+
+    completed_buffer = adc_buffer1; //force buffer0 read on startup (ISR)
+
+    //calibrate
+    NRF_SAADC->TASKS_CALIBRATEOFFSET = 1;
+    while (NRF_SAADC->EVENTS_CALIBRATEDDONE == 0);
+    NRF_SAADC->EVENTS_CALIBRATEDDONE = 0;
+
+    //timer1 config
+    NRF_TIMER1->MODE = TIMER_MODE_MODE_Timer;
+    NRF_TIMER1->BITMODE = TIMER_BITMODE_BITMODE_32Bit;
+    NRF_TIMER1->PRESCALER = 4; //16 MHz / 2^4 = 1 MHz (1 us/tick)
+    NRF_TIMER1->CC[0] = 100; //100 ticks = 100 us (10 kHz)
+    NRF_TIMER1->SHORTS = TIMER_SHORTS_COMPARE0_CLEAR_Msk; //ccp clear timer
+
+    //samples at ccp event detection
+    NRF_PPI->CH[0].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[0];
+    NRF_PPI->CH[0].TEP = (uint32_t)&NRF_SAADC->TASKS_SAMPLE;
+    NRF_PPI->CHENSET = PPI_CHENSET_CH0_Msk; //ch0 enable for short
+
+    //timer start
+    NRF_TIMER1->TASKS_START = 1;
 }
