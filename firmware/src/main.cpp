@@ -1,22 +1,25 @@
 #include <Arduino.h>
 #include <Adafruit_TinyUSB.h> // Include the Adafruit TinyUSB library for serial functionality
 
-// macros
+// put macros here:
 // analog i/o pin count
 #define CHANNEL_NUM 3
 // 64 samples/read
 #define BUFFER_SIZE 64*CHANNEL_NUM
+
 
 // put function declarations here:
 int myFunction(int, int);
 void init_saadc_dma_ppi(void); // SAADC setup config (sensor reading is offloaded preventing analogRead stalls)
 extern "C" void SAADC_IRQHandler(void); // SAADC interrupt
 
+
 // global vars
 alignas(4) int16_t adc_buffer0[BUFFER_SIZE];
 alignas(4) int16_t adc_buffer1[BUFFER_SIZE];
 volatile bool buffer_ready = false;
 volatile int16_t* completed_buffer = nullptr;
+
 
 void setup() {
 	// put your setup code here, to run once:
@@ -33,6 +36,9 @@ void loop() {
 	
     unsigned long time = millis();
 	
+	
+	
+	// SAADC read logic (SAADC reads and prints once every ~19.2 ms)
     if (buffer_ready) {
         buffer_ready = false; // flag clear
 
@@ -55,9 +61,12 @@ void loop() {
         int16_t index = ch1_sum / samples_per_channel; //ch1 avg
         int16_t middle = ch2_sum / samples_per_channel; //ch2 avg
 
-        Serial.printf("Time: %lu ms, Thumb: %d, Index: %d, Middle: %d\n", time, thumb, index, middle); // SAADC reads and prints once every ~19.2 ms
+        Serial.printf("%lu, %d, %d, %d\n", time, thumb, index, middle);
     }
+	
 }
+
+
 
 // put function definitions here:
 int myFunction(int x, int y) {
@@ -68,7 +77,7 @@ extern "C" void SAADC_IRQHandler(void) {
     if (NRF_SAADC->EVENTS_END) {
         NRF_SAADC->EVENTS_END = 0; // clear flag
 
-        // assign completed buffer to the alternate state and load the just finished buffer next
+        // assign completed buffer to alternate state and load just finished buffer next
         if (completed_buffer == adc_buffer0) {
             completed_buffer = adc_buffer1;
             NRF_SAADC->RESULT.PTR = (uint32_t)adc_buffer1; // queue buffer1 next
@@ -82,15 +91,15 @@ extern "C" void SAADC_IRQHandler(void) {
 }
 
 void init_saadc_dma_ppi() {
-    // saadc en
-    NRF_SAADC->ENABLE = SAADC_ENABLE_ENABLE_Enabled;
-	
+    NRF_SAADC->ENABLE = SAADC_ENABLE_ENABLE_Enabled; // saadc en
+
+	// interrupt config
     NRF_SAADC->INTENSET = (SAADC_INTENSET_END_Msk);
     NVIC_SetPriority(SAADC_IRQn, 3);
     NVIC_EnableIRQ(SAADC_IRQn);
 	
     // channel config (expand to channel size)
-    NRF_SAADC->CH[0].PSELP = SAADC_CH_PSELP_PSELP_AnalogInput1; // pos ref input pin
+    NRF_SAADC->CH[0].PSELP = SAADC_CH_PSELP_PSELP_AnalogInput1; // pos ref A0
     NRF_SAADC->CH[0].PSELN = SAADC_CH_PSELN_PSELN_NC; // neg ref ground
     NRF_SAADC->CH[0].CONFIG = (SAADC_CH_CONFIG_RESP_Bypass     << SAADC_CH_CONFIG_RESP_Pos)   |
                               (SAADC_CH_CONFIG_RESN_Bypass     << SAADC_CH_CONFIG_RESN_Pos)   |
