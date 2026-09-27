@@ -15,10 +15,10 @@ extern "C" void SAADC_IRQHandler(void); // SAADC interrupt
 
 
 // global vars
-alignas(4) int16_t adc_buffer0[BUFFER_SIZE];
+alignas(4) int16_t adc_buffer0[BUFFER_SIZE]; // double buffer allow simultaneous read/write
 alignas(4) int16_t adc_buffer1[BUFFER_SIZE];
-volatile bool buffer_ready = false;
-volatile int16_t* completed_buffer = nullptr;
+volatile bool buffer_ready = false; // flag to collect DMA data
+volatile int16_t* completed_buffer = nullptr; // ptr to the currently unused buffer
 
 
 void setup() {
