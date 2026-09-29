@@ -43,7 +43,7 @@ void loop() {
 		
 		// clean local read (pause interrupts temporarily)
 		__disable_irq();
-		int16_t* local_buffer;
+		volatile int16_t* local_buffer;
 		local_buffer = completed_buffer;
 		__enable_irq();
 		
@@ -138,8 +138,8 @@ void init_saadc_dma_ppi() {
 	
 	// calibrate
 	NRF_SAADC->TASKS_CALIBRATEOFFSET = 1;
-	while (NRF_SAADC->EVENTS_CALIBRATEDDONE == 0);
-	NRF_SAADC->EVENTS_CALIBRATEDDONE = 0;
+	while (NRF_SAADC->EVENTS_CALIBRATEDONE == 0);
+	NRF_SAADC->EVENTS_CALIBRATEDONE = 0;
 	
 	//timer1 config
 	NRF_TIMER1->MODE = TIMER_MODE_MODE_Timer;
