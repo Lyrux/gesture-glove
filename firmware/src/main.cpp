@@ -17,7 +17,7 @@ extern "C" void SAADC_IRQHandler(void); // SAADC interrupt
 alignas(4) int16_t adc_buffer0[BUFFER_SIZE]; // double buffer allow simultaneous read/write
 alignas(4) int16_t adc_buffer1[BUFFER_SIZE];
 volatile bool buffer_ready = false; // flag to collect DMA data
-int16_t* completed_buffer = nullptr; // ptr to the currently unused buffer
+int16_t* volatile completed_buffer = nullptr; // ptr to the currently unused buffer
 
 
 void setup() {
