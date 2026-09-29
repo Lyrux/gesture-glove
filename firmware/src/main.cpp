@@ -1,8 +1,9 @@
 #include <Arduino.h>
 #include <Adafruit_TinyUSB.h> // Include the Adafruit TinyUSB library for serial functionality
+#include "he_sensors.h"
 
 // put function declarations here:
-int myFunction(int, int);
+
 
 // pinouts
 const int THUMB_PIN = A0;
@@ -11,11 +12,9 @@ const int MIDDLE_PIN = A2;
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(115200);
+  Serial.begin(115200); // default baud rate is 115200 bps
 
-  pinMode(THUMB_PIN, INPUT);
-  pinMode(INDEX_PIN, INPUT);
-  pinMode(MIDDLE_PIN, INPUT);
+  initHESensors();
 
   Serial.println("time_ms,thumb,index,middle");
 }
@@ -24,22 +23,17 @@ void loop() {
   // put your main code here, to run repeatedly:
   unsigned long time = millis();
 
-  int thumb = analogRead(THUMB_PIN);
-  int index = analogRead(INDEX_PIN);
-  int middle = analogRead(MIDDLE_PIN);
+  HEData data = readHESensors();
 
   Serial.print(time);
   Serial.print(",");
-  Serial.print(thumb);
+  Serial.print(data.thumb);
   Serial.print(",");
-  Serial.print(index);
+  Serial.print(data.index);
   Serial.print(",");
-  Serial.println(middle);
+  Serial.println(data.middle);
 
-  delay(50);
+  delay(100); // 100 ms delay between readings
 }
 
 // put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
-}
