@@ -14,6 +14,7 @@ void setup() {
 	Serial.println("time_ms,thumb,index,middle");
 }
 
+
 void loop() {
 	// put your main code here, to run repeatedly:
 	
