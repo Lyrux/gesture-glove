@@ -1,14 +1,10 @@
 #include <Arduino.h>
-#include <Adafruit_TinyUSB.h> // Include the Adafruit TinyUSB library for serial functionality
 #include "he_sensors.h"
-#include "saadc_dma.h"
-
 
 // global vars
 alignas(4) int16_t adc_buffer0[BUFFER_SIZE]; // double buffer allow simultaneous read/write
 alignas(4) int16_t adc_buffer1[BUFFER_SIZE];
 int16_t* volatile completed_buffer = nullptr; // ptr to the currently unused buffer
-
 
 // put function definitions here:
 void init_saadc_dma_ppi() {
