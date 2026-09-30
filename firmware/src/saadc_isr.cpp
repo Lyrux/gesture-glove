@@ -1,15 +1,11 @@
 #include <Arduino.h>
-#include <Adafruit_TinyUSB.h> // Include the Adafruit TinyUSB library for serial functionality
 #include "he_sensors.h"
-#include "saadc_dma.h"
-
 
 // global vars
 volatile bool buffer_ready = false; // flag to collect DMA data
 
-
 // put function definitions here:
-extern "C" void SAADC_IRQHandler(void) {
+extern "C" void SAADC_IRQHandler(void) { // interrupt service routine
 	if (NRF_SAADC->EVENTS_END) {
 		NRF_SAADC->EVENTS_END = 0; // clear flag
 		
