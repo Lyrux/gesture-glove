@@ -1,8 +1,6 @@
 #include <Arduino.h>
 #include <Adafruit_TinyUSB.h> // Include the Adafruit TinyUSB library for serial functionality
 #include "he_sensors.h"
-#include "saadc_dma.h"
-
 
 void setup() {
 	// put your setup code here, to run once:
@@ -13,7 +11,6 @@ void setup() {
 	
 	Serial.println("time_ms,thumb,index,middle");
 }
-
 
 void loop() {
 	// put your main code here, to run repeatedly:
