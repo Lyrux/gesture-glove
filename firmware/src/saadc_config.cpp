@@ -2,9 +2,8 @@
 #include "he_sensors.h"
 
 // global vars
-alignas(4) int16_t adc_buffer0[BUFFER_SIZE]; // double buffer allow simultaneous read/write
-alignas(4) int16_t adc_buffer1[BUFFER_SIZE];
-int16_t* volatile completed_buffer = nullptr; // ptr to the currently unused buffer
+int16_t adc_buffer0[BUFFER_SIZE] [[gnu::aligned(4)]]; // double buffer allow simultaneous read/write
+int16_t adc_buffer1[BUFFER_SIZE] [[gnu::aligned(4)]];
 
 // put function definitions here:
 void init_saadc_dma_ppi() {

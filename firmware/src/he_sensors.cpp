@@ -1,8 +1,9 @@
 #include <Arduino.h>
 #include "he_sensors.h"
 
-HEData readHESensors()
-{
+int16_t* volatile completed_buffer = nullptr; // ptr to the currently unused buffer
+
+HEData readHESensors() {
     HEData data;
     
     // SAADC read logic (SAADC reads and prints once every ~6.4 ms)

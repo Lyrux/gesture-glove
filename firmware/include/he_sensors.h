@@ -8,10 +8,10 @@
 #define BUFFER_SIZE 64*CHANNEL_NUM
 
 // global vars
-extern alignas(4) int16_t adc_buffer0[BUFFER_SIZE]; // double buffer allow simultaneous read/write
-extern alignas(4) int16_t adc_buffer1[BUFFER_SIZE];
-extern volatile bool buffer_ready = false; // flag to collect DMA data
-extern int16_t* volatile completed_buffer = nullptr; // ptr to the currently unused buffer
+extern int16_t adc_buffer0[BUFFER_SIZE] [[gnu::aligned(4)]]; // double buffer allow simultaneous read/write
+extern int16_t adc_buffer1[BUFFER_SIZE] [[gnu::aligned(4)]];
+extern volatile bool buffer_ready; // flag to collect DMA data
+extern int16_t* volatile completed_buffer; // ptr to the currently unused buffer
 
 // structs
 struct HEData {
