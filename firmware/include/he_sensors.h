@@ -3,9 +3,9 @@
 
 struct HEData
 {
-    int thumb;
-    int index;
-    int middle;
+    int16_t thumb;
+    int16_t index;
+    int16_t middle;
 };
 
 void initHESensors();
