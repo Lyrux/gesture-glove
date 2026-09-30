@@ -8,7 +8,6 @@ struct HEData
     int16_t middle;
 };
 
-void initHESensors();
 HEData readHESensors();
 
 #endif
