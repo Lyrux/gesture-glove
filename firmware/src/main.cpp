@@ -8,7 +8,6 @@ void setup() {
 	// put your setup code here, to run once:
 	Serial.begin(115200);
 	
-	
 	__enable_irq(); // interrupt en
 	init_saadc_dma_ppi();
 	
