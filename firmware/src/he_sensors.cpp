@@ -1,7 +1,5 @@
 #include <Arduino.h>
 #include "he_sensors.h"
-#include "saadc_dma.h"
-
 
 HEData readHESensors()
 {
