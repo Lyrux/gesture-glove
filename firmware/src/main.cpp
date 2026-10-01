@@ -6,15 +6,15 @@ void setup() {
 	// put your setup code here, to run once:
 	Serial.begin(115200);
 	
-	__enable_irq(); // interrupt en
-	init_saadc_dma_ppi();
+	initHESensors();
 	
 	Serial.println("time_ms,thumb,index,middle");
 }
 
 void loop() {
 	// put your main code here, to run repeatedly:
-	
+	__WFE();
+
 	unsigned long time = millis();
 	
 	HEData data = readHESensors();

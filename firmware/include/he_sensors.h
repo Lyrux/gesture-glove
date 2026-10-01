@@ -5,7 +5,7 @@
 // analog i/o pin count
 #define CHANNEL_NUM 3
 // 64 samples/read
-#define BUFFER_SIZE 64*CHANNEL_NUM
+#define BUFFER_SIZE 8*CHANNEL_NUM
 
 // global vars
 extern int16_t adc_buffer0[BUFFER_SIZE] [[gnu::aligned(4)]]; // double buffer allow simultaneous read/write
@@ -22,6 +22,7 @@ struct HEData {
 
 // put function declarations here:
 HEData readHESensors(); // in loop DMA RAM write
+void initHESensors(); //HE initilization
 void init_saadc_dma_ppi(void); // SAADC setup config (sensor reading is offloaded preventing analogRead stalls)
 
 

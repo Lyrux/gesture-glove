@@ -17,7 +17,7 @@ HEData readHESensors() {
 		__enable_irq();
 		
 		int32_t ch0_sum = 0, ch1_sum = 0, ch2_sum = 0;
-		int samples_per_channel = BUFFER_SIZE / CHANNEL_NUM; // 64 each (buffer size)
+		int samples_per_channel = BUFFER_SIZE / CHANNEL_NUM; // 8 each (buffer size)
 		
 		for (int i = 0; i < BUFFER_SIZE; i += CHANNEL_NUM)  {
 			ch0_sum += local_buffer[i]; // ch0 samples at mod3=0
@@ -31,4 +31,9 @@ HEData readHESensors() {
 	}
     
     return data;
+}
+
+void initHESensors() {
+    __enable_irq(); // interrupt en
+	void init_saadc_dma_ppi(); // dma config
 }
