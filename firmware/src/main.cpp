@@ -14,7 +14,7 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200); // default baud rate is 115200 bps
 
-  InitHESensors();
+  initHESensors();
 
   Serial.println("time_ms,thumb,index,middle");
 }
@@ -23,7 +23,7 @@ void loop() {
   // put your main code here, to run repeatedly:
   unsigned long time = millis();
 
-  HEData data = ReadHESensors();
+  HEData data = readHESensors();
 
   Serial.print(time);
   Serial.print(",");
