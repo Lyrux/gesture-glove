@@ -6,14 +6,12 @@ const int THUMB_PIN = A0;
 const int INDEX_PIN = A1;
 const int MIDDLE_PIN = A2;
 
-void initHESensors()
-{
+void InitHESensors() {
     // 12-bit ADC resolution (0-4095)
     analogReadResolution(12);
 }
 
-HEData readHESensors()
-{
+HEData ReadHESensors() {
     HEData data;
 
     data.thumb = analogRead(THUMB_PIN);
