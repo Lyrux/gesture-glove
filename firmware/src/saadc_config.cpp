@@ -71,7 +71,7 @@ void InitSaadcDmaPpi() {
 	
 	// rtc2 config (low power)
 	NRF_RTC2->PRESCALER = 0; 
-	NRF_RTC2->CC[0] = 210; // ~6.4 ms interval
+	NRF_RTC2->CC[0] = 32768/ADC_SAMPLE_FREQ; // ~10 ms interval
 	
 	// starts timer 1 at rtc2 ccp event detection
 	NRF_PPI->CH[0].EEP = (uint32_t)&NRF_RTC2->EVENTS_COMPARE[0];

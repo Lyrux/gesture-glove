@@ -4,8 +4,10 @@
 // put macros here:
 // analog i/o pin count
 #define CHANNEL_NUM 3
-// 64 samples/read
+// 8 samples/read
 #define BUFFER_SIZE 8*CHANNEL_NUM
+// in Hz
+#define ADC_SAMPLE_FREQ 100
 
 // global vars
 extern int16_t adc_buffer0[BUFFER_SIZE] [[gnu::aligned(4)]]; // double buffer allow simultaneous read/write
