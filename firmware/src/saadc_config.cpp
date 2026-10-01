@@ -6,7 +6,7 @@ int16_t adc_buffer0[BUFFER_SIZE] [[gnu::aligned(4)]]; // double buffer allow sim
 int16_t adc_buffer1[BUFFER_SIZE] [[gnu::aligned(4)]];
 
 // put function definitions here:
-void init_saadc_dma_ppi() {
+void InitSaadcDmaPpi() {
 	NRF_SAADC->ENABLE = SAADC_ENABLE_ENABLE_Enabled; // saadc en
 	
 	// interrupt config

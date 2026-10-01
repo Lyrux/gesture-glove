@@ -6,7 +6,7 @@ void setup() {
 	// put your setup code here, to run once:
 	Serial.begin(115200);
 	
-	initHESensors();
+	InitHESensors();
 	
 	Serial.println("time_ms,thumb,index,middle");
 }
@@ -17,7 +17,7 @@ void loop() {
 
 	unsigned long time = millis();
 	
-	HEData data = readHESensors();
+	HEData data = ReadHESensors();
 	
 	Serial.printf("%lu, %d, %d, %d\n", time, data.thumb, data.index, data.middle);
 }

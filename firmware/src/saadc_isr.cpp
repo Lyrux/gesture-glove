@@ -5,7 +5,7 @@
 volatile bool buffer_ready = false; // flag to collect DMA data
 
 // put function definitions here:
-extern "C" void SAADC_IRQHandler(void) { // interrupt service routine
+extern "C" void SAADC_IRQHandler(void) { // ISR CASE SENSITIVE DO NOT PASCAL CASE
 	if (NRF_SAADC->EVENTS_END) {
 		NRF_SAADC->EVENTS_END = 0; // clear flag
 		

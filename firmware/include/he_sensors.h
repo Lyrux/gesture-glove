@@ -21,9 +21,9 @@ struct HEData {
 };
 
 // put function declarations here:
-HEData readHESensors(); // in loop DMA RAM write
-void initHESensors(); //HE initilization
-void init_saadc_dma_ppi(void); // SAADC setup config (sensor reading is offloaded preventing analogRead stalls)
+HEData ReadHESensors(); // in loop DMA RAM write
+void InitHESensors(); //HE initilization
+void InitSaadcDmaPpi(void); // SAADC setup config (sensor reading is offloaded preventing analogRead stalls)
 
 
 #endif

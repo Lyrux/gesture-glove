@@ -3,7 +3,7 @@
 
 int16_t* volatile completed_buffer = nullptr; // ptr to the currently unused buffer
 
-HEData readHESensors() {
+HEData ReadHESensors() {
     HEData data;
     
     // SAADC read logic (SAADC reads and prints once every ~6.4 ms)
@@ -33,7 +33,7 @@ HEData readHESensors() {
     return data;
 }
 
-void initHESensors() {
+void InitHESensors() {
     __enable_irq(); // interrupt en
-	void init_saadc_dma_ppi(); // dma config
+	void InitSaadcDmaPpi(); // dma config
 }
