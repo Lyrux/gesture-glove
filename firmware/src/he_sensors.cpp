@@ -3,10 +3,17 @@
 
 int16_t* volatile completed_buffer = nullptr; // ptr to the currently unused buffer
 
+void InitHESensors() {
+	completed_buffer = adc_buffer1; // force buffer0 read on startup (ISR)
+	
+	__enable_irq(); // interrupt en
+	void InitSaadcDmaPpi(); // dma register config
+}
+
 HEData ReadHESensors() {
     HEData data;
     
-    // SAADC read logic (SAADC reads and prints once every ~6.4 ms)
+    // SAADC read logic (SAADC reads and prints once every 10 ms)
 	if (buffer_ready) {
 		buffer_ready = false; // flag clear
 		
@@ -31,9 +38,4 @@ HEData ReadHESensors() {
 	}
     
     return data;
-}
-
-void InitHESensors() {
-    __enable_irq(); // interrupt en
-	void InitSaadcDmaPpi(); // dma config
 }

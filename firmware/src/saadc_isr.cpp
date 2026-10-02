@@ -5,6 +5,16 @@
 volatile bool buffer_ready = false; // flag to collect DMA data
 
 // put function definitions here:
+/**
+ * @brief Interrupt Service Routine driving SAADC double buffer scheme.
+ * 
+ * Handles pointer swapping between the two buffer addresses. 
+ * Completed buffer pointer is changed to the buffer that just 
+ * finished being written to. NFR_SAADC->RESULT.PTR queues the 
+ * buffer that just finished to after the currently running 
+ * one. Raises flag to signal to main loop that data is available.
+ * 
+ */
 extern "C" void SAADC_IRQHandler(void) { // ISR CASE SENSITIVE DO NOT PASCAL CASE
 	if (NRF_SAADC->EVENTS_END) {
 		NRF_SAADC->EVENTS_END = 0; // clear flag

@@ -15,34 +15,19 @@ void InitSaadcDmaPpi() {
 	NVIC_EnableIRQ(SAADC_IRQn);
 	
 	// channel config (expand to channel size)
-	NRF_SAADC->CH[0].PSELP = SAADC_CH_PSELP_PSELP_AnalogInput1; // pos ref A0
-	NRF_SAADC->CH[0].PSELN = SAADC_CH_PSELN_PSELN_NC; // neg ref ground
-	NRF_SAADC->CH[0].CONFIG = (SAADC_CH_CONFIG_RESP_Bypass     << SAADC_CH_CONFIG_RESP_Pos)   |
-	                          (SAADC_CH_CONFIG_RESN_Bypass     << SAADC_CH_CONFIG_RESN_Pos)   |
-	                          (SAADC_CH_CONFIG_GAIN_Gain1_6    << SAADC_CH_CONFIG_GAIN_Pos)   | 
-	                          (SAADC_CH_CONFIG_REFSEL_Internal << SAADC_CH_CONFIG_REFSEL_Pos) | 
-	                          (SAADC_CH_CONFIG_TACQ_10us       << SAADC_CH_CONFIG_TACQ_Pos)   | 
-	                          (SAADC_CH_CONFIG_MODE_SE         << SAADC_CH_CONFIG_MODE_Pos);
+	for (int i = 0; i < CHANNEL_NUM; i++) {
+	NRF_SAADC->CH[i].PSELP = SAADC_CH_PSELP_PSELP_AnalogInput1 + i; // sets ADC channels to pins sequentially
 	
-	NRF_SAADC->CH[1].PSELP = SAADC_CH_PSELP_PSELP_AnalogInput2;
-	NRF_SAADC->CH[1].PSELN = SAADC_CH_PSELN_PSELN_NC; 
-	NRF_SAADC->CH[1].CONFIG = (SAADC_CH_CONFIG_RESP_Bypass     << SAADC_CH_CONFIG_RESP_Pos)   | 
+	NRF_SAADC->CH[i].PSELN = SAADC_CH_PSELN_PSELN_NC; 
+	NRF_SAADC->CH[i].CONFIG = (SAADC_CH_CONFIG_RESP_Bypass     << SAADC_CH_CONFIG_RESP_Pos)   | 
 	                          (SAADC_CH_CONFIG_RESN_Bypass     << SAADC_CH_CONFIG_RESN_Pos)   | 
-	                          (SAADC_CH_CONFIG_GAIN_Gain1_6    << SAADC_CH_CONFIG_GAIN_Pos)   | 
-	                          (SAADC_CH_CONFIG_REFSEL_Internal << SAADC_CH_CONFIG_REFSEL_Pos) | 
-	                          (SAADC_CH_CONFIG_TACQ_10us       << SAADC_CH_CONFIG_TACQ_Pos)   | 
-	                          (SAADC_CH_CONFIG_MODE_SE         << SAADC_CH_CONFIG_MODE_Pos);
-	
-	NRF_SAADC->CH[2].PSELP = SAADC_CH_PSELP_PSELP_AnalogInput3;
-	NRF_SAADC->CH[2].PSELN = SAADC_CH_PSELN_PSELN_NC; 
-	NRF_SAADC->CH[2].CONFIG = (SAADC_CH_CONFIG_RESP_Bypass     << SAADC_CH_CONFIG_RESP_Pos)   |
-	                          (SAADC_CH_CONFIG_RESN_Bypass     << SAADC_CH_CONFIG_RESN_Pos)   |
  	                          (SAADC_CH_CONFIG_GAIN_Gain1_6    << SAADC_CH_CONFIG_GAIN_Pos)   | 
 	                          (SAADC_CH_CONFIG_REFSEL_Internal << SAADC_CH_CONFIG_REFSEL_Pos) | 
 	                          (SAADC_CH_CONFIG_TACQ_10us       << SAADC_CH_CONFIG_TACQ_Pos)   | 
 	                          (SAADC_CH_CONFIG_MODE_SE         << SAADC_CH_CONFIG_MODE_Pos);
-	
-	for (int i = 3; i < 8; i++) {
+	}
+
+	for (int i = CHANNEL_NUM; i < 8; i++) {
 		NRF_SAADC->CH[i].PSELP = SAADC_CH_PSELP_PSELP_NC; // no connect unused saadc analog pins
 	}
 	
@@ -54,8 +39,6 @@ void InitSaadcDmaPpi() {
 	NRF_SAADC->RESULT.MAXCNT = BUFFER_SIZE;
 	NRF_SAADC->TASKS_START = 1; // latch active
 	NRF_SAADC->RESULT.PTR = (uint32_t)adc_buffer1; // load next
-	
-	completed_buffer = adc_buffer1; // force buffer0 read on startup (ISR)
 	
 	// calibrate
 	NRF_SAADC->TASKS_CALIBRATEOFFSET = 1;
@@ -71,7 +54,7 @@ void InitSaadcDmaPpi() {
 	
 	// rtc2 config (low power)
 	NRF_RTC2->PRESCALER = 0; 
-	NRF_RTC2->CC[0] = 32768/ADC_SAMPLE_FREQ; // ~10 ms interval
+	NRF_RTC2->CC[0] = 32768/SAMPLE_FREQ; // ~10 ms interval
 	
 	// starts timer 1 at rtc2 ccp event detection
 	NRF_PPI->CH[0].EEP = (uint32_t)&NRF_RTC2->EVENTS_COMPARE[0];
