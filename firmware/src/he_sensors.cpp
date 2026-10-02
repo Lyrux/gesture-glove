@@ -1,24 +1,41 @@
 #include <Arduino.h>
 #include "he_sensors.h"
 
-// Pinouts
-const int THUMB_PIN = A0;
-const int INDEX_PIN = A1;
-const int MIDDLE_PIN = A2;
+int16_t* volatile completed_buffer = nullptr; // ptr to the currently unused buffer
 
-void initHESensors()
-{
-    // 12-bit ADC resolution (0-4095)
-    analogReadResolution(12);
+void InitHESensors() {
+	completed_buffer = adc_buffer1; // force buffer0 read on startup (ISR)
+	
+	__enable_irq(); // interrupt en
+	void InitSaadcDmaPpi(); // dma register config
 }
 
-HEData readHESensors()
-{
+HEData ReadHESensors() {
     HEData data;
-
-    data.thumb = analogRead(THUMB_PIN);
-    data.index = analogRead(INDEX_PIN);
-    data.middle = analogRead(MIDDLE_PIN);
-
+    
+    // SAADC read logic (SAADC reads and prints once every 10 ms)
+	if (buffer_ready) {
+		buffer_ready = false; // flag clear
+		
+		// clean local read (pause interrupts temporarily)
+		__disable_irq();
+		int16_t* local_buffer;
+		local_buffer = completed_buffer;
+		__enable_irq();
+		
+		int32_t ch0_sum = 0, ch1_sum = 0, ch2_sum = 0;
+		int samples_per_channel = BUFFER_SIZE / CHANNEL_NUM; // 8 each (buffer size)
+		
+		for (int i = 0; i < BUFFER_SIZE; i += CHANNEL_NUM)  {
+			ch0_sum += local_buffer[i]; // ch0 samples at mod3=0
+			ch1_sum += local_buffer[i + 1]; // ch1 samples at mod3=1
+			ch2_sum += local_buffer[i + 2]; // ch2 samples at mod3=2
+		}
+		
+		data.thumb = ch0_sum / samples_per_channel; //ch0 avg
+		data.index = ch1_sum / samples_per_channel; //ch1 avg
+		data.middle = ch2_sum / samples_per_channel; //ch2 avg
+	}
+    
     return data;
 }
