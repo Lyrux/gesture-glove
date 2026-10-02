@@ -19,7 +19,7 @@
  * 
  */
 #define CHANNEL_NUM 3
-#define BUFFER_SIZE 8*CHANNEL_NUM
+#define BUFFER_SIZE (8 * CHANNEL_NUM)
 #define SAMPLE_FREQ 100
 
 // global vars
