@@ -7,7 +7,8 @@ void InitHESensors() {
 	completed_buffer = adc_buffer1; // force buffer0 read on startup (ISR)
 	
 	__enable_irq(); // interrupt en
-	void InitSaadcDmaPpi(); // dma register config
+	void InitSaadcDmaPpi(void); // local declaration to prevent external visibility
+	InitSaadcDmaPpi(); // SAADC setup config (sensor reading is offloaded preventing analogRead stalls)
 }
 
 HEData ReadHESensors() {

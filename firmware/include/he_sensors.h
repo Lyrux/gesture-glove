@@ -53,13 +53,8 @@ HEData ReadHESensors(); // in loop DMA RAM write
  * 
  * Enables interrupts, and gives an initial value to the 
  * completed buffer pointer. Runs DMA config function 
- * InitSaadcDmaPPi().
- * 
- */
-void InitHESensors(); //HE initilization
-
-/**
- * @brief Helper function describing specific register values for PPI.
+ * InitSaadcDmaPPi(), a helper function describing specific 
+ * register values for PPI. This helper does the following: 
  * 
  * Enables and configures used SAADC channels, 
  * calibration and resolution. Sets up interrupt sequence 
@@ -67,10 +62,9 @@ void InitHESensors(); //HE initilization
  * a double buffer sequence to allow simultaneous 
  * read/write of data, and queues both buffers. Enables 
  * Timer1 and RTC2 to drive PPI and create an on/off duty 
- * cycle through CCP shorts.
+ * cycle through CCP shorts..
  * 
  */
-void InitSaadcDmaPpi(void); // SAADC setup config (sensor reading is offloaded preventing analogRead stalls)
-
+void InitHESensors(); //HE initilization
 
 #endif
