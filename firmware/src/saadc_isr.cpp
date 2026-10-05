@@ -1,10 +1,7 @@
 #include <Arduino.h>
 #include "he_sensors.h"
+using namespace he_sensors;
 
-// global vars
-volatile bool buffer_ready = false; // flag to collect DMA data
-
-// put function definitions here:
 /**
  * @brief Interrupt Service Routine driving SAADC double buffer scheme.
  * 

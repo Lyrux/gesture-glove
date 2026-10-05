@@ -1,7 +1,13 @@
 #include <Arduino.h>
 #include "he_sensors.h"
+using namespace he_sensors;
 
-int16_t* volatile completed_buffer = nullptr; // ptr to the currently unused buffer
+namespace he_sensors {
+	int16_t adc_buffer0[BUFFER_SIZE] [[gnu::aligned(4)]]; // double buffer allow simultaneous read/write
+	int16_t adc_buffer1[BUFFER_SIZE] [[gnu::aligned(4)]];
+	volatile bool buffer_ready = false; // flag to collect DMA data
+	int16_t* volatile completed_buffer = nullptr; // ptr to the currently unused buffer
+}
 
 void InitHESensors() {
 	completed_buffer = adc_buffer1; // force buffer0 read on startup (ISR)

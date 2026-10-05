@@ -23,16 +23,18 @@
 #define SAMPLE_FREQ 100
 
 // global vars
-extern int16_t adc_buffer0[BUFFER_SIZE] [[gnu::aligned(4)]]; // double buffer allow simultaneous read/write
-extern int16_t adc_buffer1[BUFFER_SIZE] [[gnu::aligned(4)]];
-extern volatile bool buffer_ready; // flag to collect DMA data
-extern int16_t* volatile completed_buffer; // ptr to the currently unused buffer
+namespace he_sensors {
+	extern int16_t adc_buffer0[BUFFER_SIZE] [[gnu::aligned(4)]]; // double buffer allow simultaneous read/write
+	extern int16_t adc_buffer1[BUFFER_SIZE] [[gnu::aligned(4)]];
+	extern volatile bool buffer_ready; // flag to collect DMA data
+	extern int16_t* volatile completed_buffer; // ptr to the currently unused buffer
+}
 
 // structs
 struct HEData {
-    int16_t thumb;
-    int16_t index;
-    int16_t middle;
+	int16_t thumb;
+	int16_t index;
+	int16_t middle;
 };
 
 // put function declarations here:
@@ -62,7 +64,7 @@ HEData ReadHESensors(); // in loop DMA RAM write
  * a double buffer sequence to allow simultaneous 
  * read/write of data, and queues both buffers. Enables 
  * Timer1 and RTC2 to drive PPI and create an on/off duty 
- * cycle through CCP shorts..
+ * cycle through CCP shorts.
  * 
  */
 void InitHESensors(); //HE initilization

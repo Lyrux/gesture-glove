@@ -1,11 +1,7 @@
 #include <Arduino.h>
 #include "he_sensors.h"
+using namespace he_sensors;
 
-// global vars
-int16_t adc_buffer0[BUFFER_SIZE] [[gnu::aligned(4)]]; // double buffer allow simultaneous read/write
-int16_t adc_buffer1[BUFFER_SIZE] [[gnu::aligned(4)]];
-
-// put function definitions here:
 void InitSaadcDmaPpi() {
 	NRF_SAADC->ENABLE = SAADC_ENABLE_ENABLE_Enabled; // saadc en
 	
