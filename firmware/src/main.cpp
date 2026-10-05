@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <Adafruit_TinyUSB.h> // Include the Adafruit TinyUSB library for serial functionality
+#define HIDE_MACROS
 #include "he_sensors.h"
 
 void setup() {

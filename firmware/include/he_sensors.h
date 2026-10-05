@@ -5,27 +5,29 @@
 /**
  * @brief macro constant definitions
  * 
- * HES_CHANNEL_NUM - 
+ * CHANNEL_NUM - 
  * Describes amount of Hall-Effect Sensor analog pins in use.
  * 
- * HES_BUFFER_SIZE - 
+ * BUFFER_SIZE - 
  * Describes how many samples to average per sample cycle.
  * 
- * HES_SAMPLE_FREQ - 
+ * SAMPLE_FREQ - 
  * Describes how often the software interrupts queue a DMA 
  * write to RAM. (NOTE - the current design allows a maximum 
- * period of HES_BUFFER_SIZE*100us. This may be reduced later 
+ * period of BUFFER_SIZE*100us. This may be reduced later 
  * dependent on specific hardware implementation.
  * 
  */
-#define HES_CHANNEL_NUM 3
-#define HES_BUFFER_SIZE (8 * HES_CHANNEL_NUM)
-#define HES_SAMPLE_FREQ 100
+#ifndef HIDE_MACROS
+#define CHANNEL_NUM 3
+#define BUFFER_SIZE (8 * CHANNEL_NUM)
+#define SAMPLE_FREQ 100
+#endif
 
 // global vars
 namespace he_sensors {
-	extern int16_t adc_buffer0[HES_BUFFER_SIZE] [[gnu::aligned(4)]]; // double buffer allow simultaneous read/write
-	extern int16_t adc_buffer1[HES_BUFFER_SIZE] [[gnu::aligned(4)]];
+	extern int16_t adc_buffer0[BUFFER_SIZE] [[gnu::aligned(4)]]; // double buffer allow simultaneous read/write
+	extern int16_t adc_buffer1[BUFFER_SIZE] [[gnu::aligned(4)]];
 	extern volatile bool buffer_ready; // flag to collect DMA data
 	extern int16_t* volatile completed_buffer; // ptr to the currently unused buffer
 }
