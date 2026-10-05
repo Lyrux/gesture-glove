@@ -3,8 +3,8 @@
 using namespace he_sensors;
 
 namespace he_sensors {
-	int16_t adc_buffer0[BUFFER_SIZE] [[gnu::aligned(4)]]; // double buffer allow simultaneous read/write
-	int16_t adc_buffer1[BUFFER_SIZE] [[gnu::aligned(4)]];
+	int16_t adc_buffer0[HES_BUFFER_SIZE] [[gnu::aligned(4)]]; // double buffer allow simultaneous read/write
+	int16_t adc_buffer1[HES_BUFFER_SIZE] [[gnu::aligned(4)]];
 	volatile bool buffer_ready = false; // flag to collect DMA data
 	int16_t* volatile completed_buffer = nullptr; // ptr to the currently unused buffer
 }
@@ -31,9 +31,9 @@ HEData ReadHESensors() {
 		__enable_irq();
 		
 		int32_t ch0_sum = 0, ch1_sum = 0, ch2_sum = 0;
-		int samples_per_channel = BUFFER_SIZE / CHANNEL_NUM; // 8 each (buffer size)
+		int samples_per_channel = HES_BUFFER_SIZE / HES_CHANNEL_NUM; // 8 each (buffer size)
 		
-		for (int i = 0; i < BUFFER_SIZE; i += CHANNEL_NUM)  {
+		for (int i = 0; i < HES_BUFFER_SIZE; i += HES_CHANNEL_NUM)  {
 			ch0_sum += local_buffer[i]; // ch0 samples at mod3=0
 			ch1_sum += local_buffer[i + 1]; // ch1 samples at mod3=1
 			ch2_sum += local_buffer[i + 2]; // ch2 samples at mod3=2
