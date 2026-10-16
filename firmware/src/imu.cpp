@@ -32,26 +32,21 @@ namespace
      *
      * The report interval is 50 ms, corresponding to a 20 Hz update rate.
      */
-    void EnableReports()
-    {
-        if (!BNO08X.enableReport(SH2_ROTATION_VECTOR, 50000))
-        {
+    void EnableReports() {
+        if (!BNO08X.enableReport(SH2_ROTATION_VECTOR, 50000)) {
             Serial.println("Failed to enable rotation-vector report.");
         }
     }
 
 } // namespace
 
-void InitIMU()
-{
+void InitIMU() {
     Wire.begin();
 
-    if (!BNO08X.begin_I2C(0x4A, &Wire))
-    {
+    if (!BNO08X.begin_I2C(0x4A, &Wire)) {
         Serial.println("Failed to initialize BNO085 IMU.");
 
-        while (true)
-        {
+        while (true) {
             delay(100);
         }
     }
@@ -61,20 +56,16 @@ void InitIMU()
     Serial.println("BNO085 IMU initialized successfully.");
 }
 
-bool UpdateIMU()
-{
-    if (BNO08X.wasReset())
-    {
+bool UpdateIMU() {
+    if (BNO08X.wasReset()) {
         EnableReports();
     }
 
-    if (!BNO08X.getSensorEvent(&SENSOR_VALUE))
-    {
+    if (!BNO08X.getSensorEvent(&SENSOR_VALUE)) {
         return false;
     }
 
-    if (SENSOR_VALUE.sensorId != SH2_ROTATION_VECTOR)
-    {
+    if (SENSOR_VALUE.sensorId != SH2_ROTATION_VECTOR) {
         return false;
     }
 
@@ -85,17 +76,14 @@ bool UpdateIMU()
 
     IMU_DATA.roll = atan2(
                         2.0f * (real * i + j * k),
-                        1.0f - 2.0f * (i * i + j * j)) *
-                    RAD_TO_DEG;
+                        1.0f - 2.0f * (i * i + j * j)) * RAD_TO_DEG;
 
     IMU_DATA.pitch = asin(
-                         constrain(2.0f * (real * j - k * i), -1.0f, 1.0f)) *
-                     RAD_TO_DEG;
+                        constrain(2.0f * (real * j - k * i), -1.0f, 1.0f)) * RAD_TO_DEG;
 
     return true;
 }
 
-IMUData ReadIMU()
-{
+IMUData ReadIMU() {
     return IMU_DATA;
 }

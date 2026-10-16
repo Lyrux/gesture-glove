@@ -13,8 +13,7 @@ namespace
 	/**
 	 * @brief Configures registers and enables, and sets initial value(s).
 	 */
-	void InitSaadcDmaPpi()
-	{
+	void InitSaadcDmaPpi() {
 		NRF_SAADC->ENABLE = SAADC_ENABLE_ENABLE_Enabled; // saadc en
 
 		// interrupt config
@@ -23,21 +22,19 @@ namespace
 		NVIC_EnableIRQ(SAADC_IRQn);
 
 		// channel config (expand to channel size)
-		for (int i = 0; i < CHANNEL_NUM; i++)
-		{
+		for (int i = 0; i < CHANNEL_NUM; i++) {
 			NRF_SAADC->CH[i].PSELP = SAADC_CH_PSELP_PSELP_AnalogInput1 + i; // sets ADC channels to pins sequentially
 
 			NRF_SAADC->CH[i].PSELN = SAADC_CH_PSELN_PSELN_NC;
 			NRF_SAADC->CH[i].CONFIG = (SAADC_CH_CONFIG_RESP_Bypass << SAADC_CH_CONFIG_RESP_Pos) |
 									  (SAADC_CH_CONFIG_RESN_Bypass << SAADC_CH_CONFIG_RESN_Pos) |
-									  (SAADC_CH_CONFIG_GAIN_Gain1_6 << SAADC_CH_CONFIG_GAIN_Pos) |
-									  (SAADC_CH_CONFIG_REFSEL_Internal << SAADC_CH_CONFIG_REFSEL_Pos) |
+									  (SAADC_CH_CONFIG_GAIN_Gain1_6 << SAADC_CH_CONFIG_GAIN_Pos) |		// 1/6 gain
+									  (SAADC_CH_CONFIG_REFSEL_Internal << SAADC_CH_CONFIG_REFSEL_Pos) | // 0.6V reference
 									  (SAADC_CH_CONFIG_TACQ_10us << SAADC_CH_CONFIG_TACQ_Pos) |
-									  (SAADC_CH_CONFIG_MODE_SE << SAADC_CH_CONFIG_MODE_Pos);
+									  (SAADC_CH_CONFIG_MODE_SE << SAADC_CH_CONFIG_MODE_Pos); // single-ended
 		}
 
-		for (int i = CHANNEL_NUM; i < 8; i++)
-		{
+		for (int i = CHANNEL_NUM; i < 8; i++) {
 			NRF_SAADC->CH[i].PSELP = SAADC_CH_PSELP_PSELP_NC; // no connect unused saadc analog pins
 		}
 
@@ -52,8 +49,7 @@ namespace
 
 		// calibrate
 		NRF_SAADC->TASKS_CALIBRATEOFFSET = 1;
-		while (NRF_SAADC->EVENTS_CALIBRATEDONE == 0)
-			;
+		while (NRF_SAADC->EVENTS_CALIBRATEDONE == 0);
 		NRF_SAADC->EVENTS_CALIBRATEDONE = 0;
 
 		// timer1 config
@@ -98,20 +94,15 @@ namespace
  * one. Raises flag to signal to main loop that data is available.
  *
  */
-extern "C" void SAADC_IRQHandler(void)
-{ // ISR CASE SENSITIVE DO NOT PASCAL CASE
-	if (NRF_SAADC->EVENTS_END)
-	{
+extern "C" void SAADC_IRQHandler(void) { // ISR CASE SENSITIVE DO NOT PASCAL CASE
+	if (NRF_SAADC->EVENTS_END) {
 		NRF_SAADC->EVENTS_END = 0; // clear flag
 
 		// assign completed buffer to alternate state and load just finished buffer next
-		if (completed_buffer == adc_buffer0)
-		{
+		if (completed_buffer == adc_buffer0) {
 			completed_buffer = adc_buffer1;
 			NRF_SAADC->RESULT.PTR = (uint32_t)adc_buffer1; // queue buffer1 next
-		}
-		else
-		{
+		} else {
 			completed_buffer = adc_buffer0;
 			NRF_SAADC->RESULT.PTR = (uint32_t)adc_buffer0; // queue buffer0 next
 		}
@@ -144,7 +135,7 @@ HEData ReadHESensors() {
 		int32_t ch0_sum = 0, ch1_sum = 0, ch2_sum = 0;
 		int samples_per_channel = BUFFER_SIZE / CHANNEL_NUM; // 8 each (buffer size)
 		
-		for (int i = 0; i < BUFFER_SIZE; i += CHANNEL_NUM)  {
+		for (int i = 0; i < BUFFER_SIZE; i += CHANNEL_NUM) {
 			ch0_sum += local_buffer[i]; // ch0 samples at mod3=0
 			ch1_sum += local_buffer[i + 1]; // ch1 samples at mod3=1
 			ch2_sum += local_buffer[i + 2]; // ch2 samples at mod3=2

@@ -50,12 +50,14 @@ void InitHESensors(); // HE initilization
 
 /**
  * @brief Handles read logic in main loop of DMA to RAM.
- * 
- * When the interrupt raises a flag signalling the end of 
- * data collection, starts the sampling process. Creates 
- * a local copy of the buffer to reference and then averages 
- * the most recent readings.
- * 
+ *
+ * When the interrupt raises a flag signalling the end of
+ * data collection, starts the sampling process. Creates
+ * a local copy of the buffer to reference and then average
+ * the most recent readings. Note that all ADC readings are
+ * in reference to the MCU internal 0.6V * 6 = 3.6V, despite
+ * 3.3V Vdd power supply.
+ *
  * @return HEData struct holds ADC finger values
  */
 HEData ReadHESensors(); // in loop DMA RAM write
