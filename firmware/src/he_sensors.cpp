@@ -129,7 +129,7 @@ void InitHESensors() {
 }
 
 HEData ReadHESensors() {
-    HEData data{};
+    HEData data;
     
     // SAADC read logic (SAADC reads and prints once every 10 ms)
 	if (buffer_ready) {

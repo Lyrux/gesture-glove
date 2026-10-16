@@ -1,23 +1,29 @@
 #include <Arduino.h>
-#include <Adafruit_TinyUSB.h> // Include the Adafruit TinyUSB library for serial functionality
+#include <Adafruit_TinyUSB.h>
 #include "he_sensors.h"
+#include "imu.h"
 
-void setup() {
-	// put your setup code here, to run once:
+void setup()
+{
 	Serial.begin(115200);
-	
+
 	InitHESensors();
-	
-	Serial.println("time_ms,thumb,index,middle");
+	InitIMU();
+
+	Serial.println(
+		"time_ms,thumb,index,middle,pitch_deg,roll_deg");
 }
 
-void loop() {
-	// put your main code here, to run repeatedly:
+void loop()
+{
 	__WFE();
 
 	unsigned long time = millis();
-	
+
 	HEData data = ReadHESensors();
-	
-	Serial.printf("%lu, %d, %d, %d\n", time, data.thumb, data.index, data.middle);
+
+	IMUData imu_data = ReadIMU();
+
+
+	Serial.printf("%lu,%d,%d,%d,%.2f,%.2f\n", time, data.thumb, data.index, data.middle, imu_data.pitch, imu_data.roll); 
 }
