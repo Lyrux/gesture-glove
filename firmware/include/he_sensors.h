@@ -2,24 +2,27 @@
 #define HE_SENSORS_H
 
 /**
- * @brief macro constant definitions
- * 
- * CHANNEL_NUM - 
- * Describes amount of Hall-Effect Sensor analog pins in use.
- * 
- * BUFFER_SIZE - 
- * Describes how many samples to average per sample cycle.
- * 
- * SAMPLE_FREQ - 
- * Describes how often the software interrupts queue a DMA 
- * write to RAM. (NOTE - the current design allows a maximum 
- * period of BUFFER_SIZE*100us. This may be reduced later 
- * dependent on specific hardware implementation.
- * 
+ * @def CHANNEL_NUM
+ * @brief Number of Hall-effect sensor channels used.
  */
-// HE sensor config
 #define CHANNEL_NUM 3
+
+/**
+ * @def BUFFER_SIZE
+ * @brief Total number of ADC samples stored in each DMA buffer.
+ *
+ * With three channels and eight samples per channel, the buffer
+ * contains 24 interleaved ADC samples.
+ */
 #define BUFFER_SIZE (8 * CHANNEL_NUM)
+
+/**
+ * @def SAMPLE_FREQ
+ * @brief Frequency of each Hall-effect sensor acquisition burst in hertz.
+ *
+ * RTC2 starts an acquisition burst every 10 ms. The SAADC/PPI hardware
+ * performs the sampling; the interrupt runs when the DMA buffer is full.
+ */
 #define SAMPLE_FREQ 100
 
 // structs

@@ -1,5 +1,4 @@
 #include "imu.h"
-
 #include <Arduino.h>
 #include <Adafruit_BNO08x.h>
 #include <Wire.h>
@@ -7,83 +6,112 @@
 
 namespace
 {
-
     /**
      * @brief BNO085 driver instance.
      *
      * A reset pin value of -1 indicates that the reset pin is not being used.
      */
-    Adafruit_BNO08x BNO08X(-1);
+    Adafruit_BNO08x bno08x(BNO08X_RESET_PIN);
 
     /**
      * @brief Stores the latest event received from the BNO085.
      */
-    sh2_SensorValue_t SENSOR_VALUE;
+    sh2_SensorValue_t sensor_value;
 
     /**
-     * @brief Stores the most recently calculated orientation.
+     * @brief Stores the latest calculated IMU orientation.
+     *
+     * Pitch and roll values are expressed in degrees. Both values are initialized to zero
+     * until the first valid rotation-vector event is received from the BNO085.
      */
-    IMUData IMU_DATA = {
-        .pitch = 0.0f,
-        .roll = 0.0f};
+    IMUData imu_data = {
+        0.0f, // pitch
+        0.0f  // roll
+    };
 
     /**
      * @brief Enables the BNO085 rotation-vector report.
      *
-     * The report interval is 50 ms, corresponding to a 20 Hz update rate.
+     * The report interval is 100 ms, corresponding to a 10 Hz update rate.
      */
-    void EnableReports() {
-        if (!BNO08X.enableReport(SH2_ROTATION_VECTOR, 50000)) {
-            Serial.println("Failed to enable rotation-vector report.");
+    bool EnableReports() {
+        Serial.println("Setting desired reports");
+        if (!bno08x.enableReport(SH2_GAME_ROTATION_VECTOR, IMU_UPDATE_INTERVAL)) {
+            Serial.println("Error: Failed to enable rotation-vector report.");
+            return false;
         }
+        return true;
     }
 
 } // namespace
 
-void InitIMU() {
+bool InitIMU() {
     Wire.begin();
+    if (!bno08x.begin_I2C(I2C_ADDRESS, &Wire)) {
+        Serial.println("Failed to find BNO08x chip");
+        return false;
+    }
+    Serial.println("BNO08x Found!");
 
-    if (!BNO08X.begin_I2C(0x4A, &Wire)) {
-        Serial.println("Failed to initialize BNO085 IMU.");
-
-        while (true) {
-            delay(100);
-        }
+    for (int n = 0; n < bno08x.prodIds.numEntries; n++) {
+        Serial.print("Part ");
+        Serial.print(bno08x.prodIds.entry[n].swPartNumber);
+        Serial.print(": Version :");
+        Serial.print(bno08x.prodIds.entry[n].swVersionMajor);
+        Serial.print(".");
+        Serial.print(bno08x.prodIds.entry[n].swVersionMinor);
+        Serial.print(".");
+        Serial.print(bno08x.prodIds.entry[n].swVersionPatch);
+        Serial.print(" Build ");
+        Serial.println(bno08x.prodIds.entry[n].swBuildNumber);
     }
 
-    EnableReports();
+    if (!EnableReports()) {
+        return false;
+    }
 
     Serial.println("BNO085 IMU initialized successfully.");
+    // delay(100); // Only needed if there's startup timing issues
+    return true;
 }
 
 bool UpdateIMU() {
-    if (BNO08X.wasReset()) {
-        EnableReports();
+    if (bno08x.wasReset()) {
+        if (!EnableReports()) {
+            return false;
+        }
     }
 
-    if (!BNO08X.getSensorEvent(&SENSOR_VALUE)) {
+    if (!bno08x.getSensorEvent(&sensor_value)) {
         return false;
     }
 
-    if (SENSOR_VALUE.sensorId != SH2_ROTATION_VECTOR) {
-        return false;
+    switch (sensor_value.sensorId) {
+        case SH2_GAME_ROTATION_VECTOR: {
+            float w = sensor_value.un.gameRotationVector.real;
+            float x = sensor_value.un.gameRotationVector.i;
+            float y = sensor_value.un.gameRotationVector.j;
+            float z = sensor_value.un.gameRotationVector.k;
+
+            float sinr = 2.0f * (w * x + y * z);
+            float cosr = 1.0f - 2.0f * (x * x + y * y);
+
+            float sinp = 2.0f * (w * y - z * x);
+            sinp = constrain(sinp, -1.0f, 1.0f);
+
+            imu_data.roll = atan2f(sinr, cosr) * 180.0f / PI;
+            imu_data.pitch = asinf(sinp) * 180.0f / PI;
+            break;
+        }
+
+        default:
+            Serial.print("Unknown sensor ID: ");
+            Serial.println(sensor_value.sensorId);
+            return false;
     }
-
-    float i = SENSOR_VALUE.un.rotationVector.i;
-    float j = SENSOR_VALUE.un.rotationVector.j;
-    float k = SENSOR_VALUE.un.rotationVector.k;
-    float real = SENSOR_VALUE.un.rotationVector.real;
-
-    IMU_DATA.roll = atan2(
-                        2.0f * (real * i + j * k),
-                        1.0f - 2.0f * (i * i + j * j)) * RAD_TO_DEG;
-
-    IMU_DATA.pitch = asin(
-                        constrain(2.0f * (real * j - k * i), -1.0f, 1.0f)) * RAD_TO_DEG;
-
     return true;
 }
 
 IMUData ReadIMU() {
-    return IMU_DATA;
+    return imu_data;
 }
