@@ -1,6 +1,7 @@
 #ifndef HE_SENSORS_H
 #define HE_SENSORS_H
 
+#ifndef HIDE_MACROS
 /**
  * @def CHANNEL_NUM
  * @brief Number of Hall-effect sensor channels used.
@@ -24,6 +25,7 @@
  * performs the sampling; the interrupt runs when the DMA buffer is full.
  */
 #define SAMPLE_FREQ 100
+#endif
 
 // structs
 struct HEData {
@@ -46,7 +48,7 @@ struct HEData {
  * a double buffer sequence to allow simultaneous
  * read/write of data, and queues both buffers. Enables
  * Timer1 and RTC2 to drive PPI and create an on/off duty
- * cycle through CCP shorts..
+ * cycle through CCP shorts.
  *
  */
 void InitHESensors(); // HE initilization

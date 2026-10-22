@@ -4,8 +4,7 @@
 #include <Wire.h>
 #include <math.h>
 
-namespace
-{
+namespace {
     /**
      * @brief BNO085 driver instance.
      *

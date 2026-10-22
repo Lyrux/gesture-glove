@@ -10,14 +10,10 @@ void setup()
 	InitHESensors();
 	InitIMU();
 
-	Serial.println(
-		"time_ms,thumb,index,middle,pitch_deg,roll_deg");
+	Serial.println("time_ms,thumb,index,middle,pitch_deg,roll_deg");
 }
 
-void loop()
-{
-	__WFE();
-
+void loop() {
 	unsigned long time = millis();
 
 	HEData data = ReadHESensors();

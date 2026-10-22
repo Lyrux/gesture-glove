@@ -18,7 +18,7 @@ namespace
 
 		// interrupt config
 		NRF_SAADC->INTENSET = (SAADC_INTENSET_END_Msk);
-		NVIC_SetPriority(SAADC_IRQn, 3);
+		NVIC_SetPriority(SAADC_IRQn, 6);
 		NVIC_EnableIRQ(SAADC_IRQn);
 
 		// channel config (expand to channel size)
@@ -53,11 +53,11 @@ namespace
 		NRF_SAADC->EVENTS_CALIBRATEDONE = 0;
 
 		// timer1 config
-		NRF_TIMER1->MODE = TIMER_MODE_MODE_Timer;
-		NRF_TIMER1->BITMODE = TIMER_BITMODE_BITMODE_32Bit;
-		NRF_TIMER1->PRESCALER = 4;							  // 16 MHz / 2^4 = 1 MHz (1 us/tick)
-		NRF_TIMER1->CC[0] = 100;							  // 100 ticks = 100 us (10 kHz)
-		NRF_TIMER1->SHORTS = TIMER_SHORTS_COMPARE0_CLEAR_Msk; // ccp clear timer
+		NRF_TIMER3->MODE = TIMER_MODE_MODE_Timer;
+		NRF_TIMER3->BITMODE = TIMER_BITMODE_BITMODE_32Bit;
+		NRF_TIMER3->PRESCALER = 4;							  // 16 MHz / 2^4 = 1 MHz (1 us/tick)
+		NRF_TIMER3->CC[0] = 100;							  // 100 ticks = 100 us (10 kHz)
+		NRF_TIMER3->SHORTS = TIMER_SHORTS_COMPARE0_CLEAR_Msk; // ccp clear timer
 
 		// rtc2 config (low power)
 		NRF_RTC2->PRESCALER = 0;
@@ -66,16 +66,16 @@ namespace
 		// starts timer 1 at rtc2 ccp event detection
 		NRF_PPI->CH[0].EEP = (uint32_t)&NRF_RTC2->EVENTS_COMPARE[0];
 		NRF_PPI->CH[0].TEP = (uint32_t)&NRF_RTC2->TASKS_CLEAR;
-		NRF_PPI->FORK[0].TEP = (uint32_t)&NRF_TIMER1->TASKS_START;
+		NRF_PPI->FORK[0].TEP = (uint32_t)&NRF_TIMER3->TASKS_START;
 
 		// samples at timer1 ccp event detection
-		NRF_PPI->CH[1].EEP = (uint32_t)&NRF_TIMER1->EVENTS_COMPARE[0];
+		NRF_PPI->CH[1].EEP = (uint32_t)&NRF_TIMER3->EVENTS_COMPARE[0];
 		NRF_PPI->CH[1].TEP = (uint32_t)&NRF_SAADC->TASKS_SAMPLE;
 
 		// powers down at sample end to conserve power
 		NRF_PPI->CH[2].EEP = (uint32_t)&NRF_SAADC->EVENTS_END;
 		NRF_PPI->CH[2].TEP = (uint32_t)&NRF_SAADC->TASKS_STOP;
-		NRF_PPI->FORK[2].TEP = (uint32_t)&NRF_TIMER1->TASKS_STOP;
+		NRF_PPI->FORK[2].TEP = (uint32_t)&NRF_TIMER3->TASKS_STOP;
 
 		NRF_PPI->CHENSET = PPI_CHENSET_CH0_Msk | PPI_CHENSET_CH1_Msk | PPI_CHENSET_CH2_Msk; // short ch[0:2] enable
 
@@ -127,10 +127,9 @@ HEData ReadHESensors() {
 		buffer_ready = false; // flag clear
 		
 		// clean local read (pause interrupts temporarily)
-		__disable_irq();
-		int16_t* local_buffer;
-		local_buffer = completed_buffer;
-		__enable_irq();
+		NVIC_DisableIRQ(SAADC_IRQn);
+		int16_t* local_buffer = completed_buffer;
+		NVIC_EnableIRQ(SAADC_IRQn);
 		
 		int32_t ch0_sum = 0, ch1_sum = 0, ch2_sum = 0;
 		int samples_per_channel = BUFFER_SIZE / CHANNEL_NUM; // 8 each (buffer size)

@@ -1,6 +1,7 @@
 #ifndef IMU_H
 #define IMU_H
 
+#ifndef HIDE_MACROS
 /**
  * @def BNO08X_RESET_PIN
  * @brief Reset pin assigned to the BNO085.
@@ -25,12 +26,12 @@
  * update rate.
  */
 #define IMU_UPDATE_INTERVAL 100000
+#endif
 
 /**
  * @brief Stores the current orientation measured by the BNO085.
  */
-struct IMUData
-{
+struct IMUData {
     float pitch; // Rotation about the lateral axis, in degrees.
     float roll;  // Rotation about the longitudinal axis, in degrees.
 };
