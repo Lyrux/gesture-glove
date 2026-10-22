@@ -120,9 +120,9 @@ void InitHESensors() {
 }
 
 HEData ReadHESensors() {
-    HEData data;
-    
-    // SAADC read logic (SAADC reads and prints once every 10 ms)
+	HEData data{};
+
+	// SAADC read logic (SAADC reads and prints once every 10 ms)
 	if (buffer_ready) {
 		buffer_ready = false; // flag clear
 		

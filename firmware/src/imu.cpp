@@ -46,24 +46,13 @@ namespace {
 
 bool InitIMU() {
     Wire.begin();
+    Wire.setClock(100000);
+
     if (!bno08x.begin_I2C(I2C_ADDRESS, &Wire)) {
         Serial.println("Failed to find BNO08x chip");
         return false;
     }
     Serial.println("BNO08x Found!");
-
-    for (int n = 0; n < bno08x.prodIds.numEntries; n++) {
-        Serial.print("Part ");
-        Serial.print(bno08x.prodIds.entry[n].swPartNumber);
-        Serial.print(": Version :");
-        Serial.print(bno08x.prodIds.entry[n].swVersionMajor);
-        Serial.print(".");
-        Serial.print(bno08x.prodIds.entry[n].swVersionMinor);
-        Serial.print(".");
-        Serial.print(bno08x.prodIds.entry[n].swVersionPatch);
-        Serial.print(" Build ");
-        Serial.println(bno08x.prodIds.entry[n].swBuildNumber);
-    }
 
     if (!EnableReports()) {
         return false;
@@ -86,6 +75,7 @@ bool UpdateIMU() {
     }
 
     switch (sensor_value.sensorId) {
+        // Roll & Pitch calculations
         case SH2_GAME_ROTATION_VECTOR: {
             float w = sensor_value.un.gameRotationVector.real;
             float x = sensor_value.un.gameRotationVector.i;
@@ -104,8 +94,6 @@ bool UpdateIMU() {
         }
 
         default:
-            Serial.print("Unknown sensor ID: ");
-            Serial.println(sensor_value.sensorId);
             return false;
     }
     return true;
