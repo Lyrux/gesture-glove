@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <Adafruit_TinyUSB.h>
+#define HIDE_MACROS
 #include "he_sensors.h"
 #include "imu.h"
 
