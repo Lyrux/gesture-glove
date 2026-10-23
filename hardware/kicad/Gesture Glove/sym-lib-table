@@ -1,0 +1,4 @@
+(sym_lib_table
+	(version 7)
+	(lib (name "Gesture Glove-eagle-import") (type "KiCad") (uri "${KIPRJMOD}/Gesture Glove-eagle-import.kicad_sym") (options "") (descr ""))
+)
