@@ -7,7 +7,7 @@
 	(title_block
 		(title "Gesture Glove Full Schematic")
 		(date "2026-10-22")
-		(rev "1.09")
+		(rev "1.10")
 		(company "N-TAIL")
 	)
 	(lib_symbols
@@ -4671,7 +4671,7 @@
 		)
 		(uuid "0e88448e-1c3c-4303-b59f-15ee1ef45181")
 	)
-	(label "3V0_HES2"
+	(label "3V3_HES2"
 		(at 56.515 163.195 90)
 		(effects
 			(font
@@ -4751,7 +4751,7 @@
 		)
 		(uuid "4a4777ee-0558-4531-a853-1505ca4b270e")
 	)
-	(label "3VO_HES2"
+	(label "3V3_HES2"
 		(at 61.595 133.985 180)
 		(effects
 			(font
@@ -4781,7 +4781,7 @@
 		)
 		(uuid "5e827d7e-279c-4831-9ba1-52923ef2f3a1")
 	)
-	(label "3V0_HES1"
+	(label "3V3_HES1"
 		(at 36.195 133.985 180)
 		(effects
 			(font
@@ -4801,7 +4801,7 @@
 		)
 		(uuid "772be0b5-b08e-4faa-87d7-fbc0f789eb04")
 	)
-	(label "3V0_HES1"
+	(label "3V3_HES1"
 		(at 15.875 163.195 90)
 		(effects
 			(font
@@ -4811,7 +4811,7 @@
 		)
 		(uuid "93013ff0-9f9d-49be-b5d1-195ee355b2e9")
 	)
-	(label "3V0_HES3"
+	(label "3V3_HES3"
 		(at 86.995 133.985 180)
 		(effects
 			(font
@@ -4881,7 +4881,7 @@
 		)
 		(uuid "ed77a2e3-82fd-423a-bc31-1c6a54ba95c9")
 	)
-	(label "3V0_HES3"
+	(label "3V3_HES3"
 		(at 97.155 163.195 90)
 		(effects
 			(font

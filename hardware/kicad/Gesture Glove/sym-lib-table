@@ -1,4 +1,6 @@
 (sym_lib_table
 	(version 7)
-	(lib (name "Gesture Glove-eagle-import") (type "KiCad") (uri "${KIPRJMOD}/Gesture Glove-eagle-import.kicad_sym") (options "") (descr ""))
+	(lib (name "Seeed_Studio_XIAO_Series") (type "KiCad") (uri "${KIPRJMOD}/Libraries/Seeed_Studio_XIAO_Series.kicad_sym") (options "") (descr ""))
+	(lib (name "HCI_Custom") (type "KiCad") (uri "${KIPRJMOD}/Libraries/HCI_Custom.kicad_sym") (options "") (descr ""))
+	(lib (name "LMR14020") (type "KiCad") (uri "${KIPRJMOD}/Libraries/LMR14020SQDDARQ1/LMR14020SQDDARQ1.kicad_sym") (options "") (descr ""))
 )
