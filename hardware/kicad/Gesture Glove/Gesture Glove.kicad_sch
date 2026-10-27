@@ -6740,7 +6740,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "4ed2c5f5-7ed8-4689-abbc-b407a564a970")
-		(property "Reference" "RFBT1"
+		(property "Reference" "RFBT"
 			(at 175.895 44.45 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6751,7 +6751,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "R"
+		(property "Value" "100k"
 			(at 175.895 46.99 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6804,7 +6804,7 @@
 		(instances
 			(project "Gesture Glove"
 				(path "/2d486c3c-5949-48a3-943d-aa260e95de85"
-					(reference "RFBT1")
+					(reference "RFBT")
 					(unit 1)
 				)
 			)
@@ -7003,7 +7003,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "5a4f086a-db4e-4d02-9c8c-1ecd0a83460f")
-		(property "Reference" "RFBB1"
+		(property "Reference" "RFBB"
 			(at 175.895 52.07 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7014,7 +7014,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "R"
+		(property "Value" "16.5k"
 			(at 175.895 54.61 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7067,7 +7067,7 @@
 		(instances
 			(project "Gesture Glove"
 				(path "/2d486c3c-5949-48a3-943d-aa260e95de85"
-					(reference "RFBB1")
+					(reference "RFBB")
 					(unit 1)
 				)
 			)
@@ -7179,7 +7179,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "5b4f1d6d-b8d8-44bc-b9e1-c86dceb0c70c")
-		(property "Reference" "CSS1"
+		(property "Reference" "CSS"
 			(at 116.84 58.42 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7190,7 +7190,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C"
+		(property "Value" "22nF"
 			(at 116.84 60.96 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7243,7 +7243,7 @@
 		(instances
 			(project "Gesture Glove"
 				(path "/2d486c3c-5949-48a3-943d-aa260e95de85"
-					(reference "CSS1")
+					(reference "CSS")
 					(unit 1)
 				)
 			)
@@ -7510,7 +7510,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "63958baf-b82a-4468-bb0c-393a7e80db11")
-		(property "Reference" "COUT1"
+		(property "Reference" "COUT"
 			(at 177.165 36.83 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7521,7 +7521,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C"
+		(property "Value" "47uF"
 			(at 177.165 39.3699 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7574,7 +7574,7 @@
 		(instances
 			(project "Gesture Glove"
 				(path "/2d486c3c-5949-48a3-943d-aa260e95de85"
-					(reference "COUT1")
+					(reference "COUT")
 					(unit 1)
 				)
 			)
@@ -8761,7 +8761,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "9c2317a6-7f5b-4fbb-900e-f5832085ffd7")
-		(property "Reference" "CIN1"
+		(property "Reference" "CIN"
 			(at 118.11 38.1 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8772,7 +8772,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C"
+		(property "Value" "2.2uF"
 			(at 118.11 40.64 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8825,7 +8825,7 @@
 		(instances
 			(project "Gesture Glove"
 				(path "/2d486c3c-5949-48a3-943d-aa260e95de85"
-					(reference "CIN1")
+					(reference "CIN")
 					(unit 1)
 				)
 			)
@@ -10005,8 +10005,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "cec3dfea-b66e-4919-a104-e32458d04c71")
-		(property "Reference" "L2"
-			(at 170.18 36.195 90)
+		(property "Reference" "L1"
+			(at 170.18 36.83 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -10015,8 +10015,8 @@
 				)
 			)
 		)
-		(property "Value" "L"
-			(at 170.18 38.735 90)
+		(property "Value" "5.5uH"
+			(at 170.18 39.37 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -10067,7 +10067,7 @@
 		(instances
 			(project "Gesture Glove"
 				(path "/2d486c3c-5949-48a3-943d-aa260e95de85"
-					(reference "L2")
+					(reference "L1")
 					(unit 1)
 				)
 			)
@@ -10445,7 +10445,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "e1bd1bed-17bf-4994-aa3f-7ff988078dc1")
-		(property "Reference" "CBOOT1"
+		(property "Reference" "CBOOT"
 			(at 163.195 36.83 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10456,7 +10456,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "C"
+		(property "Value" "100nF"
 			(at 163.195 39.3699 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10509,7 +10509,7 @@
 		(instances
 			(project "Gesture Glove"
 				(path "/2d486c3c-5949-48a3-943d-aa260e95de85"
-					(reference "CBOOT1")
+					(reference "CBOOT")
 					(unit 1)
 				)
 			)
@@ -10532,7 +10532,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "e51ce817-5eb9-4c75-b63c-26d21712f895")
-		(property "Reference" "RT1"
+		(property "Reference" "RT"
 			(at 117.475 46.9899 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10543,7 +10543,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "R"
+		(property "Value" "23.2k"
 			(at 117.475 49.5299 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10596,7 +10596,7 @@
 		(instances
 			(project "Gesture Glove"
 				(path "/2d486c3c-5949-48a3-943d-aa260e95de85"
-					(reference "RT1")
+					(reference "RT")
 					(unit 1)
 				)
 			)
