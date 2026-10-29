@@ -8,8 +8,8 @@ void setup()
 {
 	Serial.begin(115200);
 
-	InitHESensors();
 	InitIMU();
+	InitHESensors();
 
 	Serial.println("time_ms,thumb,index,middle,pitch_deg,roll_deg");
 	//Serial.println("time_ms,pitch_deg,roll_deg");

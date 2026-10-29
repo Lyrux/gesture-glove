@@ -18,7 +18,7 @@ namespace
 
 		// interrupt config
 		NRF_SAADC->INTENSET = (SAADC_INTENSET_END_Msk);
-		NVIC_SetPriority(SAADC_IRQn, 6);
+		NVIC_SetPriority(SAADC_IRQn, 7);
 		NVIC_EnableIRQ(SAADC_IRQn);
 
 		// channel config (expand to channel size)
@@ -97,6 +97,7 @@ namespace
 extern "C" void SAADC_IRQHandler(void) { // ISR CASE SENSITIVE DO NOT PASCAL CASE
 	if (NRF_SAADC->EVENTS_END) {
 		NRF_SAADC->EVENTS_END = 0; // clear flag
+		(void)NRF_SAADC->EVENTS_END;
 
 		// assign completed buffer to alternate state and load just finished buffer next
 		if (completed_buffer == adc_buffer0) {
