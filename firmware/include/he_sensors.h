@@ -1,26 +1,31 @@
 #ifndef HE_SENSORS_H
 #define HE_SENSORS_H
 
+#ifndef HIDE_MACROS
 /**
- * @brief macro constant definitions
- * 
- * CHANNEL_NUM - 
- * Describes amount of Hall-Effect Sensor analog pins in use.
- * 
- * BUFFER_SIZE - 
- * Describes how many samples to average per sample cycle.
- * 
- * SAMPLE_FREQ - 
- * Describes how often the software interrupts queue a DMA 
- * write to RAM. (NOTE - the current design allows a maximum 
- * period of BUFFER_SIZE*100us. This may be reduced later 
- * dependent on specific hardware implementation.
- * 
+ * @def CHANNEL_NUM
+ * @brief Number of Hall-effect sensor channels used.
  */
-// HE sensor config
 #define CHANNEL_NUM 3
+
+/**
+ * @def BUFFER_SIZE
+ * @brief Total number of ADC samples stored in each DMA buffer.
+ *
+ * With three channels and eight samples per channel, the buffer
+ * contains 24 interleaved ADC samples.
+ */
 #define BUFFER_SIZE (8 * CHANNEL_NUM)
+
+/**
+ * @def SAMPLE_FREQ
+ * @brief Frequency of each Hall-effect sensor acquisition burst in hertz.
+ *
+ * RTC2 starts an acquisition burst every 10 ms. The SAADC/PPI hardware
+ * performs the sampling; the interrupt runs when the DMA buffer is full.
+ */
 #define SAMPLE_FREQ 100
+#endif
 
 // structs
 struct HEData {
@@ -43,19 +48,21 @@ struct HEData {
  * a double buffer sequence to allow simultaneous
  * read/write of data, and queues both buffers. Enables
  * Timer1 and RTC2 to drive PPI and create an on/off duty
- * cycle through CCP shorts..
+ * cycle through CCP shorts.
  *
  */
 void InitHESensors(); // HE initilization
 
 /**
  * @brief Handles read logic in main loop of DMA to RAM.
- * 
- * When the interrupt raises a flag signalling the end of 
- * data collection, starts the sampling process. Creates 
- * a local copy of the buffer to reference and then averages 
- * the most recent readings.
- * 
+ *
+ * When the interrupt raises a flag signalling the end of
+ * data collection, starts the sampling process. Creates
+ * a local copy of the buffer to reference and then average
+ * the most recent readings. Note that all ADC readings are
+ * in reference to the MCU internal 0.6V * 6 = 3.6V, despite
+ * 3.3V Vdd power supply.
+ *
  * @return HEData struct holds ADC finger values
  */
 HEData ReadHESensors(); // in loop DMA RAM write
