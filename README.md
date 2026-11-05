@@ -258,7 +258,7 @@ Potential applications include:
 
 ## Development
 
-Firmware development is being performed using a compatible embedded development environment such as **Arduino IDE** or **PlatformIO**.
+Firmware development is being performed using **PlatformIO**.
 
 A typical firmware workflow is:
 
@@ -276,6 +276,52 @@ Sensor measurements and test data may be exported for analysis using tools such 
 - MATLAB
 
 Generated build files and temporary outputs should not be tracked by Git.
+
+## Python Serial Logger
+
+The project includes a Python utility for recording sensor data from the XIAO nRF52840.
+
+### Setup
+
+From the repository root, create the virtual environment:
+
+```powershell
+python -m venv .venv
+```
+
+Install the serial library:
+
+```powershell
+.\.venv\bin\python.exe -m pip install pyserial
+```
+
+### Configuration
+
+Open `tools/serial_logger.py` and update the serial port if needed:
+
+```python
+SERIAL_PORT = "COM9"
+```
+
+Close PlatformIO's serial monitor before running the logger.
+
+### Run the Logger
+
+From the repository root:
+
+```powershell
+.\.venv\bin\python.exe tools\serial_logger.py
+```
+
+Press `Ctrl+C` to stop recording.
+
+The captured data is saved to:
+
+```text
+data/sensor_data.csv
+```
+
+The logger filters out startup messages and other irrelevant serial output.
 
 ## Current Progress
 

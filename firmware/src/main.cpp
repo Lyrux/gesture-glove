@@ -8,7 +8,7 @@ void setup()
 {
 	Serial.begin(115200);
 
-	InitIMU();
+	//InitIMU();
 	InitHESensors();
 
 	Serial.println("time_ms,thumb,index,middle,pitch_deg,roll_deg");
@@ -22,12 +22,12 @@ void loop() {
 
 	HEData data = ReadHESensors();
 
-	//Serial.printf("%lu,%d,%d,%d,%.2f,%.2f\n", time, data.thumb, data.index, data.middle, imu_data.pitch, imu_data.roll);
+	Serial.printf("%lu,%d,%d,%d\n", time, data.thumb, data.index, data.middle);
 
-	if (UpdateIMU())
+	/* if (UpdateIMU())
 	{
 		IMUData imu_data = ReadIMU();
 		//Serial.printf("%lu,%.2f,%.2f\n", time, imu_data.pitch, imu_data.roll);
 		Serial.printf("%lu,%d,%d,%d,%.2f,%.2f\n", time, data.thumb, data.index, data.middle, imu_data.pitch, imu_data.roll);
-	}
+	} */
 }
